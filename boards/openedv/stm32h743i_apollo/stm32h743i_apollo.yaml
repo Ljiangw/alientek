@@ -1,0 +1,29 @@
+identifier: stm32h743i_apollo
+name: Apollo H743IIT6
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 512
+flash: 2048
+supported:
+  - arduino_gpio
+  - arduino_i2c
+  - uart
+  - gpio
+  - counter
+  - i2c
+  - pwm
+  - adc
+  - netif:eth
+  - spi
+  - backup_sram
+  - watchdog
+  - usb_device
+  - can
+  - dac
+  - dma
+  - rtc
+  - usbd
+vendor: st

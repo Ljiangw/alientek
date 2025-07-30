@@ -1,0 +1,6 @@
+description: |
+    AP3216C Ambient Light and Proximity Sensor. 
+
+compatible: "liteon,ap3216c"
+
+include: [sensor-device.yaml, i2c-device.yaml]

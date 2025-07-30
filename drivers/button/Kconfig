@@ -1,0 +1,7 @@
+# Create a new option in menuconfig
+config CUSTOM_BUTTON
+    bool "Custom Button Driver"
+    default n
+    depends on GPIO
+    help
+      Enable the custom button driver for handling button inputs.

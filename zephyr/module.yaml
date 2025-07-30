@@ -1,0 +1,8 @@
+name: alientek
+build:
+  cmake: .
+  kconfig: kconfig
+  settings:
+    dts_root: .
+    board_root: .
+    

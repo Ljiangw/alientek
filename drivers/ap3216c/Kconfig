@@ -1,0 +1,7 @@
+config AP3216C
+	bool "AP3216C Ambient Light and Proximity Sensor"
+	default n
+	depends on DT_HAS_LITEON_AP3216C_ENABLED
+	select I2C
+	help
+	  Enable driver for the AP3216C Ambient Light and Proximity Sensor.

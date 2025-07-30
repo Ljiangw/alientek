@@ -1,0 +1,6 @@
+board:
+  name: stm32h743i_apollo
+  full_name: Apollo H743IIT6
+  vendor: openedv
+  socs:
+    - name: stm32h743xx

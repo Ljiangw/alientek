@@ -1,0 +1,2 @@
+rsource "button/Kconfig"
+rsource "ap3216c/Kconfig"
