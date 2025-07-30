@@ -18,15 +18,24 @@ LOG_MODULE_REGISTER(ap3216c, CONFIG_SENSOR_LOG_LEVEL);
 static int ap3216c_sample_fetch(const struct device *dev,
 			     enum sensor_channel chan)
 {
-	struct ap3216c_data *drv_data = dev->data;
+	struct ap3216c_data *data = dev->data;
 	const struct ap3216c_config *cfg = dev->config;
 
 	__ASSERT_NO_MSG(chan == SENSOR_CHAN_ALL || chan == SENSOR_CHAN_AMBIENT_TEMP);
 
-	// drv_data->t_sample = get_temp(&cfg->i2c);
-	// LOG_INF("temp: %u", drv_data->t_sample);
-	// drv_data->rh_sample = get_humi(&cfg->i2c);
-	// LOG_INF("rh: %u", drv_data->rh_sample);
+	uint8_t buf[2];
+
+    /* ALS 16-bit */
+    i2c_burst_read_dt(&cfg->i2c, AP3216C_REG_ALS_DATA, buf, 2);
+    data->als = sys_get_le16(buf);
+
+    /* PS 10-bit (low 4 bits + high 6 bits) */
+    i2c_burst_read_dt(&cfg->i2c, AP3216C_REG_PS_DATA, buf, 2);
+    data->ps = ((buf[1] & 0x3F) << 4) | (buf[0] & 0x0F);
+
+    /* IR 10-bit */
+    i2c_burst_read_dt(&cfg->i2c, AP3216C_REG_IR_DATA, buf, 2);
+    data->ir = ((buf[1] & 0x03) << 8) | buf[0];
 
 	return 0;
 }
@@ -40,17 +49,24 @@ static int ap3216c_channel_get(const struct device *dev,
 	__ASSERT_NO_MSG(chan == SENSOR_CHAN_AMBIENT_TEMP ||
 			chan == SENSOR_CHAN_HUMIDITY);
 
-	// if (chan == SENSOR_CHAN_AMBIENT_TEMP) {
-	// 	/* val = sample / 32 - 50 */
-	// 	val->val1 = drv_data->t_sample / 32U - 50;
-	// 	val->val2 = (drv_data->t_sample % 32) * (1000000 / 32);
-	// } else if (chan == SENSOR_CHAN_HUMIDITY) {
-	// 	/* val = sample / 16 -24 */
-	// 	val->val1 = drv_data->rh_sample / 16U - 24;
-	// 	val->val2 = (drv_data->rh_sample % 16) * (1000000 / 16);
-	// } else {
-	// 	return -ENOTSUP;
-	// }
+	if (chan == SENSOR_CHAN_LIGHT) {
+	
+		val->val1 = drv_data->als;
+        val->val2 = 0;
+
+	} else if (chan == SENSOR_CHAN_PROX) {
+		
+		val->val1 = drv_data->ps;
+        val->val2 = 0;
+
+	} else if (chan == SENSOR_CHAN_IR) {
+        
+        val->val1 = drv_data->ir;
+        val->val2 = 0;
+
+    } else {
+		return -ENOTSUP;
+	}
 
 	return 0;
 }
@@ -62,14 +78,23 @@ static DEVICE_API(sensor, ap3216c_driver_api) = {
 
 static int ap3216c_init(const struct device *dev)
 {
+    int ret;
 	const struct ap3216c_config *cfg = dev->config;
+    uint8_t mode = 0x03;                /* ALS+PS+IR 模式 */
 
 	if (!device_is_ready(cfg->i2c.bus)) {
 		LOG_ERR("Bus device is not ready");
 		return -ENODEV;
 	}
 
-    LOG_INF("ap3216c_init\r\n");
+    /* 软复位 */
+    ret = i2c_reg_write_byte_dt(&cfg->i2c, AP3216C_REG_SYS_CFG, 0x04);
+    if (ret) return ret;
+    k_msleep(10);
+
+    /* 进入工作模式 */
+    ret = i2c_reg_write_byte_dt(&cfg->i2c, AP3216C_REG_SYS_CFG, mode);
+    if (ret) return ret;
 
 	return 0;
 }

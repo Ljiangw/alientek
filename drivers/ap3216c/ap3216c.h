@@ -5,6 +5,12 @@
 #include <zephyr/device.h>
 #include <zephyr/sys/util.h>
 
+#define AP3216C_I2C_ADDR        0x1E
+#define AP3216C_REG_SYS_CFG     0x00
+#define AP3216C_REG_ALS_DATA    0x0C
+#define AP3216C_REG_PS_DATA     0x0E
+#define AP3216C_REG_IR_DATA     0x0A
+
 struct ap3216c_config {
 	struct i2c_dt_spec i2c;
 };
