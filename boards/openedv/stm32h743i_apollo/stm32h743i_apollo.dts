@@ -18,9 +18,9 @@
 		zephyr,shell-uart = &usart1;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
-		zephyr,dtcm = &dtcm;
-		zephyr,code-partition = &slot0_partition;
-		zephyr,canbus = &fdcan1;
+		// zephyr,dtcm = &dtcm;
+		// zephyr,code-partition = &slot0_partition;
+		// zephyr,canbus = &fdcan1;
 	};
 
 	leds: leds {
@@ -29,6 +29,10 @@
 		green_led: led_0 {
 			gpios = <&gpiob 0 GPIO_ACTIVE_LOW>;
 			label = "User LD1";
+		};
+
+		beep: beeper {
+			gpios = <&pcf8574 0 GPIO_ACTIVE_LOW>;
 		};
 
 	};
@@ -66,6 +70,7 @@
 		die-temp0 = &die_temp;
 		volt-sensor0 = &vref;
 		volt-sensor1 = &vbat;
+		beep0 = &beep;
 	};
 };
 
@@ -167,6 +172,17 @@ zephyr_udc0: &usbotg_fs {
 		reg = <0x1e>;
 		status = "okay";
 	};
+
+	/* PCF8574T */
+	pcf8574: pcf8574t@20 {
+		compatible = "nxp,pcf857x";
+		reg = <0x20>;
+		gpio-controller;
+		status = "okay";
+		int-gpios = <&gpiob 12 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        #gpio-cells = <2>;
+        ngpios = <8>;            
+	};
 };
 
 &timers3 {
@@ -262,44 +278,44 @@ zephyr_udc0: &usbotg_fs {
 	status = "okay";
 };
 
-&flash0 {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
+// &flash0 {
+// 	partitions {
+// 		compatible = "fixed-partitions";
+// 		#address-cells = <1>;
+// 		#size-cells = <1>;
 
-		/* 128KB for bootloader */
-		boot_partition: partition@0 {
-			label = "mcuboot";
-			reg = <0x00000000 DT_SIZE_K(128)>;
-			read-only;
-		};
+// 		/* 128KB for bootloader */
+// 		boot_partition: partition@0 {
+// 			label = "mcuboot";
+// 			reg = <0x00000000 DT_SIZE_K(128)>;
+// 			read-only;
+// 		};
 
-		/* storage: 128KB for settings */
-		storage_partition: partition@20000 {
-			label = "storage";
-			reg = <0x00020000 DT_SIZE_K(128)>;
-		};
+// 		/* storage: 128KB for settings */
+// 		storage_partition: partition@20000 {
+// 			label = "storage";
+// 			reg = <0x00020000 DT_SIZE_K(128)>;
+// 		};
 
-		/* application image slot: 256KB */
-		slot0_partition: partition@40000 {
-			label = "image-0";
-			reg = <0x00040000 DT_SIZE_K(256)>;
-		};
+// 		/* application image slot: 256KB */
+// 		slot0_partition: partition@40000 {
+// 			label = "image-0";
+// 			reg = <0x00040000 DT_SIZE_K(256)>;
+// 		};
 
-		/* backup slot: 256KB */
-		slot1_partition: partition@80000 {
-			label = "image-1";
-			reg = <0x00080000 DT_SIZE_K(256)>;
-		};
+// 		/* backup slot: 256KB */
+// 		slot1_partition: partition@80000 {
+// 			label = "image-1";
+// 			reg = <0x00080000 DT_SIZE_K(256)>;
+// 		};
 
-		/* swap slot: 128KB */
-		scratch_partition: partition@c0000 {
-			label = "image-scratch";
-			reg = <0x000c0000 DT_SIZE_K(128)>;
-		};
-	};
-};
+// 		/* swap slot: 128KB */
+// 		scratch_partition: partition@c0000 {
+// 			label = "image-scratch";
+// 			reg = <0x000c0000 DT_SIZE_K(128)>;
+// 		};
+// 	};
+// };
 
 &iwdg1 {
 	status = "okay";
