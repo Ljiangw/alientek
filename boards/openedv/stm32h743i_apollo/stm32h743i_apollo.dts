@@ -302,14 +302,16 @@ zephyr_udc0: &usbotg_fs {
 		     &quadspi_bk1_io2_pf7
 		     &quadspi_bk1_io3_pf6>;
 	pinctrl-names = "default";
+	flash-id = <1>;
 
   	w25q256: qspi-nor-flash@0 {
 		compatible = "st,stm32-qspi-nor";
 		label = "W25Q256";
 		reg = <0>; 
 		size = <DT_SIZE_M(256)>; /* 256 Mbits */
-		qspi-max-frequency = <72000000>;
+		qspi-max-frequency = <DT_FREQ_M(100)>;
 		spi-bus-width = <4>;
+		writeoc= "PP_1_4_4"; /* W25Q256: 0x32 = 4-byte fast read */
 		reset-cmd;         /* this line must be added!!!! */
 		status = "okay";
 	};
