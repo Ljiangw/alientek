@@ -21,6 +21,7 @@
 		// zephyr,dtcm = &dtcm;
 		// zephyr,code-partition = &slot0_partition;
 		// zephyr,canbus = &fdcan1;
+		zephyr,flash-controller = &w25q256;
 	};
 
 	leds: leds {
@@ -302,18 +303,28 @@ zephyr_udc0: &usbotg_fs {
 		     &quadspi_bk1_io2_pf7
 		     &quadspi_bk1_io3_pf6>;
 	pinctrl-names = "default";
-	flash-id = <1>;
 
   	w25q256: qspi-nor-flash@0 {
 		compatible = "st,stm32-qspi-nor";
 		label = "W25Q256";
 		reg = <0>; 
 		size = <DT_SIZE_M(256)>; /* 256 Mbits */
-		qspi-max-frequency = <DT_FREQ_M(100)>;
+		qspi-max-frequency = <40000000>;
 		spi-bus-width = <4>;
-		writeoc= "PP_1_4_4"; /* W25Q256: 0x32 = 4-byte fast read */
-		reset-cmd;         /* this line must be added!!!! */
+		writeoc = "PP_1_1_4";
+		// reset-cmd;         /* this line must be added!!!! */
 		status = "okay";
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			lfs1_partition: partition@0 {
+				label = "storage";
+				reg = <0x0 DT_SIZE_M(32)>;
+			};
+		};
 	};
 };
 
