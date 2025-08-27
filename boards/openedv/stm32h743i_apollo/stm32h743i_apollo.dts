@@ -147,13 +147,6 @@
     status = "okay";
 };
 
-&lpuart1 {
-	pinctrl-0 = <&lpuart1_tx_pb6 &lpuart1_rx_pb7>;
-	pinctrl-names = "default";
-	current-speed = <115200>;
-	status = "disabled";
-};
-
 &usart3 {
 	pinctrl-0 = <&usart3_tx_pd8 &usart3_rx_pd9>;
 	pinctrl-names = "default";
@@ -309,10 +302,9 @@ zephyr_udc0: &usbotg_fs {
 		label = "W25Q256";
 		reg = <0>; 
 		size = <DT_SIZE_M(256)>; /* 256 Mbits */
-		qspi-max-frequency = <40000000>;
+		qspi-max-frequency = <80000000>;
 		spi-bus-width = <4>;
-		writeoc = "PP_1_1_4";
-		// reset-cmd;         /* this line must be added!!!! */
+		writeoc = "PP_1_4_4";
 		status = "okay";
 
 		partitions {
