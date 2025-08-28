@@ -305,6 +305,7 @@ zephyr_udc0: &usbotg_fs {
 		qspi-max-frequency = <80000000>;
 		spi-bus-width = <4>;
 		writeoc = "PP_1_1_4";
+		reset-cmd;
 		status = "okay";
 
 		partitions {

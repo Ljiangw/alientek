@@ -1594,6 +1594,20 @@ static int flash_stm32_qspi_init(const struct device *dev)
 	k_busy_wait(DT_INST_PROP(0, reset_cmd_wait));
 #endif
 
+	QSPI_CommandTypeDef cmd_disable = {
+		.Instruction = 0xFF,
+		.Address = 0,
+		.AddressSize = QSPI_ADDRESS_8_BITS,
+		.DummyCycles = 0,
+		.InstructionMode = QSPI_INSTRUCTION_4_LINES,
+		.AddressMode = QSPI_ADDRESS_NONE,
+		.DataMode = QSPI_DATA_NONE,
+		.NbData = 0,
+	};
+
+	HAL_QSPI_Command(&dev_data->hqspi, &cmd_disable,
+				   HAL_QSPI_TIMEOUT_DEFAULT_VALUE);
+
 	/* Run NOR init */
 	const uint8_t decl_nph = 2;
 	union {
