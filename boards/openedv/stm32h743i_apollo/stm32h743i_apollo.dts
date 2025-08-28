@@ -298,13 +298,13 @@ zephyr_udc0: &usbotg_fs {
 	pinctrl-names = "default";
 
   	w25q256: qspi-nor-flash@0 {
-		compatible = "st,stm32-qspi-nor";
+		compatible = "alientek,stm32-qspi-nor";
 		label = "W25Q256";
 		reg = <0>; 
 		size = <DT_SIZE_M(256)>; /* 256 Mbits */
 		qspi-max-frequency = <80000000>;
 		spi-bus-width = <4>;
-		writeoc = "PP_1_4_4";
+		writeoc = "PP_1_1_4";
 		status = "okay";
 
 		partitions {
