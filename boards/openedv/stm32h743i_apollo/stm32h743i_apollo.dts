@@ -18,10 +18,6 @@
 		zephyr,shell-uart = &usart1;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
-		// zephyr,dtcm = &dtcm;
-		// zephyr,code-partition = &slot0_partition;
-		// zephyr,canbus = &fdcan1;
-		zephyr,flash-controller = &w25q256;
 	};
 
 	leds: leds {
@@ -62,25 +58,6 @@
 			pin = <&d0>;
 		};
 	};
-
-	/* 配置挂载点/lfs1 */
-	// fstab {
-	// 	compatible = "zephyr,fstab";
-	// 	lfs1: lfs1 {
-	// 		compatible = "zephyr,fstab,littlefs";
-	// 		mount-point = "/lfs1";
-
-	// 		/* 文件系统对应的flash partition*/
-	// 		partition = <&lfs1_partition>;
-	// 		automount;
-	// 		no-format;
-	// 		read-size = <16>;
-	// 		prog-size = <16>;
-	// 		cache-size = <64>;
-	// 		lookahead-size = <32>;
-	// 		block-cycles = <512>;
-	// 	};
-	// };
 
 	aliases {
 		led0 = &green_led;
@@ -256,7 +233,7 @@ zephyr_udc0: &usbotg_fs {
  *          must be in ON state.
  */
 &mac {
-	status = "okay";
+	status = "disabled";
 	pinctrl-0 = <&eth_rxd0_pc4
 		     &eth_rxd1_pc5
 		     &eth_ref_clk_pa1
@@ -326,50 +303,6 @@ zephyr_udc0: &usbotg_fs {
 	status = "okay";
 };
 
-&flash0 {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		// lfs1_partition: partition@100000 {
-		// 	label = "storage";
-		// 	reg = <0x00100000 DT_SIZE_K(128)>;
-		// };
-
-		// /* 128KB for bootloader */
-		// boot_partition: partition@0 {
-		// 	label = "mcuboot";
-		// 	reg = <0x00000000 DT_SIZE_K(128)>;
-		// 	read-only;
-		// };
-
-		// /* storage: 128KB for settings */
-		// storage_partition: partition@20000 {
-		// 	label = "storage";
-		// 	reg = <0x00020000 DT_SIZE_K(128)>;
-		// };
-
-		// /* application image slot: 256KB */
-		// slot0_partition: partition@40000 {
-		// 	label = "image-0";
-		// 	reg = <0x00040000 DT_SIZE_K(256)>;
-		// };
-
-		// /* backup slot: 256KB */
-		// slot1_partition: partition@80000 {
-		// 	label = "image-1";
-		// 	reg = <0x00080000 DT_SIZE_K(256)>;
-		// };
-
-		// /* swap slot: 128KB */
-		// scratch_partition: partition@c0000 {
-		// 	label = "image-scratch";
-		// 	reg = <0x000c0000 DT_SIZE_K(128)>;
-		// };
-	};
-};
-
 &iwdg1 {
 	status = "okay";
 };
@@ -382,4 +315,18 @@ zephyr_udc0: &usbotg_fs {
 	status = "okay";
 };
 
+&sdmmc1 {
+	status = "okay";
+	pinctrl-0 = <&sdmmc1_ck_pc12
+		     &sdmmc1_cmd_pd2
+		     &sdmmc1_d0_pc8
+		     &sdmmc1_d1_pc9
+		     &sdmmc1_d2_pc10
+		     &sdmmc1_d3_pc11>;
+	pinctrl-names = "default";
+	disk-name = "SD";
+	clk-div = <4>;
+	bus-width = <4>;
+	idma;
+};
 
